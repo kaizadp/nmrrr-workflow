@@ -104,7 +104,7 @@ spectra2 =
 # retain only values 0-10ppm
   filter(ppm>=0&ppm<=10) %>% 
 # remove water and DMSO regions
-  filter(!(ppm>WATER_start&ppm<WATER_stop)) %>%  
+  filter(!(ppm>DMSO_start&ppm<WATER_stop)) %>%  
   filter(!(ppm>DMSO_start&ppm<DMSO_stop))
 
 

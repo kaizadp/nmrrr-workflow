@@ -25,7 +25,10 @@ Example spectra:
 spectra processed in MestreNova, with automated Global Spectral Deconvolution.   
 Water and solvent (DMSO) regions removed for graphing purposes. Still needs some cleaning. 
 
-```{r, fig.width=12, fig.asp=1/2}
+```{r, fig.width=12, fig.height=6}
+spectra2 = 
+  spectra2 %>% 
+  filter(!(ppm>DMSO_start&ppm<WATER_stop))
 gg_nmr+
   geom_path(data=spectra2, aes(x = ppm, y = intensity, color = source))+
 # if you need to add labels:
@@ -42,3 +45,23 @@ gg_nmr+
   geom_vline(xintercept = DMSO_stop, linetype="dashed")
 ```
 
+Including solvents 
+
+```{r, fig.width=12, fig.height=6}
+gg_nmr+
+  geom_path(data=spectra[(spectra$ppm>0&spectra$ppm<10),], aes(x = ppm, y = intensity, color = source))+
+  ylim(-700,25000)+
+  #expand_limits(y=c(NA, 35000))+
+  # if you need to add labels:
+  annotate("text", label = "aliphatic", x = 1.4, y = -500)+
+  annotate("text", label = "O-alkyl", x = 3.5, y = -500)+
+  annotate("text", label = "alpha-H\n (protein)", x = 4.45, y = -600)+
+  annotate("text", label = "aromatic", x = 7, y = -500)+
+  annotate("text", label = "amide", x = 8.1, y = -500)+
+  annotate("text", label = "\n\nWATER", x = 3.5, y = Inf)+
+  annotate("text", label = "\n\nDMSO", x = 2.48, y = Inf)+
+  geom_vline(xintercept = WATER_start, linetype="longdash")+
+  geom_vline(xintercept = WATER_stop, linetype="longdash")+
+  geom_vline(xintercept = DMSO_start, linetype="dashed")+
+  geom_vline(xintercept = DMSO_stop, linetype="dashed")
+```
