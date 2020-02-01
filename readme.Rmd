@@ -1,0 +1,44 @@
+---
+title: "NMR processing"
+author: "Kaizad Patel"
+date: 2020-01-31
+output: github_document
+---
+Last updated: `r Sys.Date()`  
+
+
+This script is to batch-analyze processed NMR spectra (phase corrected, baseline corrected, deconvoluted, peak picked).  
+
+Select the appropriate binning option and then plot and calculate relative abundances.  
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE,message=FALSE,warning=FALSE,
+                      collapse = TRUE,
+                      comment = "#>" #, fig.path = "images/"
+                      )
+
+source("1-processing.R")
+```
+----
+Example spectra:  
+spectra processed in MestreNova, with automated Global Spectral Deconvolution.   
+Water and solvent (DMSO) regions removed for graphing purposes. Still needs some cleaning. 
+
+```{r, fig.width=12, fig.asp=1/2}
+gg_nmr+
+  geom_path(data=spectra2, aes(x = ppm, y = intensity, color = source))+
+# if you need to add labels:
+  annotate("text", label = "aliphatic", x = 1.4, y = -500)+
+  annotate("text", label = "O-alkyl", x = 3.5, y = -500)+
+  annotate("text", label = "alpha-H\n (protein)", x = 4.45, y = -600)+
+  annotate("text", label = "aromatic", x = 7, y = -500)+
+  annotate("text", label = "amide", x = 8.1, y = -500)+
+  annotate("text", label = "\n\nWATER", x = 3.5, y = Inf)+
+  annotate("text", label = "\n\nDMSO", x = 2.48, y = Inf)+
+  geom_vline(xintercept = WATER_start, linetype="longdash")+
+  geom_vline(xintercept = WATER_stop, linetype="longdash")+
+  geom_vline(xintercept = DMSO_start, linetype="dashed")+
+  geom_vline(xintercept = DMSO_stop, linetype="dashed")
+```
+
