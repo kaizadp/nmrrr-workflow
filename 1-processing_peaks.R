@@ -102,4 +102,48 @@ spectra2 =
 # remove water and DMSO regions
   filter(!(ppm>DMSO_start&ppm<WATER_stop)) %>%  
   filter(!(ppm>DMSO_start&ppm<DMSO_stop))
+
   
+## TRYING to collapse the columns 
+spectra_Area = 
+  spectra %>% 
+  dplyr::select(starts_with("Area")) %>% 
+  gather() %>% 
+  dplyr::select(value) %>% 
+  rename(Area=value)
+
+spectra_ppm = 
+  spectra %>% 
+  dplyr::select(starts_with("ppm")) %>% 
+  gather() %>% 
+  dplyr::select(value) %>% 
+  rename(ppm=value)
+
+spectra_Intensity = 
+  spectra %>% 
+  dplyr::select(starts_with("Intensity")) %>% 
+  gather() %>% 
+  dplyr::select(value) %>% 
+  rename(Intensity=value)
+
+spectra_Width = 
+  spectra %>% 
+  dplyr::select(starts_with("Width")) %>% 
+  gather() %>% 
+  dplyr::select(value) %>% 
+  rename(Width=value)
+
+spectra_Source = 
+  spectra %>% 
+  dplyr::select(starts_with("Source")) %>% 
+  gather() %>% 
+  dplyr::select(value) %>% 
+  rename(Source=value)
+
+
+merged = 
+  cbind(spectra_Source, spectra_ppm, spectra_Intensity, spectra_Width,spectra_Area)
+
+### OUTPUT
+write_csv(merged,"merged.csv")
+write_csv(spectra2,"processed_peaks.csv")
