@@ -1,0 +1,84 @@
+---
+title: "3-peak assignments"
+author: "Kaizad Patel"
+date: "4/9/2020"
+output: github_document
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE,
+                      message=FALSE,
+                      warning=FALSE,
+                      collapse = TRUE,
+                      comment = "#>", 
+                      fig.path = "images/md/"
+                      )
+
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(readxl)
+library(tidyr)
+```
+
+
+Assigning groups/moieties to peaks (1H NMR in DMSO)  
+
+- peaks assigned following [Soucemarianadin et al. 2017](https://doi.org/10.1016/j.orggeochem.2017.06.019)  
+
+  - reported as point values and as ranges  
+
+- binning assigned following [Clemente et al. 2012](https://doi.org/10.1071/EN11096)  
+
+
+
+
+
+
+```{r}
+bins = read_csv("nmr_bins.csv")
+BINSET = "Clemente2012"
+bins2 = 
+  bins %>% 
+  # here we select only the BINSET we chose above
+  dplyr::select(group,startstop,BINSET) %>% 
+  na.omit %>% 
+  spread(startstop,BINSET)
+```
+
+
+```{r, fig.width=15}
+peak_assg = read.csv("data/nmr_peak_assignments.csv")
+
+p = 
+  ggplot()+
+  geom_point(data = peak_assg, aes(x = deltaH_ppm, y = 0.5, color = abbrev))+
+  geom_text(data = peak_assg, aes(x = deltaH_ppm, y = 0.3, color = abbrev), label = peak_assg$abbrev, angle = 90)+
+  geom_text(data = peak_assg, aes(x = deltaH_ppm, y = 0.7, color = abbrev), label = peak_assg$moiety, angle = 90)+
+  geom_rect(data=peak_assg, aes(xmin=deltaH_start, xmax=deltaH_stop, 
+                                ymin=-Inf, ymax=1.0, fill=abbrev),alpha=0.1)+
+  geom_rect(data=bins2, aes(xmin=start, xmax=stop, 
+                            ymin=-Inf, ymax=+Inf), fill = "white", color="grey70",alpha=0.1)+
+  
+  
+  ylim(-0.1,1)+
+  theme(axis.text.y = element_blank())+
+  
+  annotate("text", label = "aliphatic", x = 1.4, y = -0.1)+
+  annotate("text", label = "O-alkyl", x = 3.5, y = -0.1)+
+  annotate("text", label = "alpha-H", x = 4.45, y = -0.1)+
+  annotate("text", label = "aromatic", x = 7, y = -0.1)+
+  annotate("text", label = "amide", x = 8.1, y = -0.1)+
+  
+  annotate("text", label = "\n\nmoiety", x = Inf, y = 0.7, angle = 90, size=6)+
+  annotate("text", label = "\n\ngroup", x = Inf, y = 0.3, angle = 90, size=6)+
+  annotate("text", label = "               BINS", x = Inf, y = -0.1, size=6)
+
+  
+  
+p + scale_x_reverse(limits = c(10,5.5))
+p + scale_x_reverse(limits = c(5.5,2.9))
+p + scale_x_reverse(limits = c(2.9,0))
+
+```
+
