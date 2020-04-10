@@ -1,29 +1,29 @@
 ﻿deltaH_ppm,deltaH_start,deltaH_stop,moiety,abbrev,group,point_range
 2.49,,,DMSO,,solvent,
-2.02,,,,acetyl,alkyl,
-2.00,,,,acetyl,alkyl,
-,1.91,1.97,,methylene,alkyl,range
-,2.18,2.25,,methylene,alkyl,range
-1.49,,,,methylene,alkyl,
-1.62,,,,methylene,alkyl,
-1.05,,,,methylene,alkyl,
-,1.37,1.43,,methylene,alkyl,range
-1.27,,,,methylene,alkyl,
+2.02,,,pglycan,acetyl,alkyl,
+2,,,alkene,acetyl,alkyl,
+,1.91,1.97,carboxyl/carbonyl/ester,methylene,alkyl,range
+,2.18,2.25,carboxyl/carbonyl/ester,methylene,alkyl,range
+1.49,,,acid/ester,methylene,alkyl,
+1.62,,,acid/ester,methylene,alkyl,
+1.05,,,acid/ester,methylene,alkyl,
+,1.37,1.43,waxes,methylene,alkyl,range
+1.27,,,waxes,methylene,alkyl,
 0.85,,,terminal CH3,methylene,alkyl,
-,0.81,0.84,,methylene,alkyl,range
+,0.81,0.84,CH3 in amino acids,methylene,alkyl,range
 0.82,,,waxes,methyl,alkyl,
-,1.23,1.25,,methyl,alkyl,range
-3.24,,,,cellulose,non-anomeric C,
-3.13,,,,cellulose,non-anomeric C,
-3.35,,,,cellulose,non-anomeric C,
-3.57,,,,cellulose,non-anomeric C,
-3.65,,,,cellulose,non-anomeric C,
-3.21,,,,cellulose,non-anomeric C,
-3.45,,,,cellulose,non-anomeric C,
-3.63,,,,cellulose,non-anomeric C,
+,1.23,1.25,aliph chains,methyl,alkyl,range
+3.24,,,cellulose,cellulose,non-anomeric C,
+3.13,,,cellulose,cellulose,non-anomeric C,
+3.35,,,cellulose,cellulose,non-anomeric C,
+3.57,,,cellulose,cellulose,non-anomeric C,
+3.65,,,cellulose,cellulose,non-anomeric C,
+3.21,,,cellulose,cellulose,non-anomeric C,
+3.45,,,cellulose,cellulose,non-anomeric C,
+3.63,,,cellulose,cellulose,non-anomeric C,
 3.53,,,glucan,cellulose,non-anomeric C,
 3.97,,,araf,hemicellulose,non-anomeric C,
-3.50,,,araf,hemicellulose,non-anomeric C,
+3.5,,,araf,hemicellulose,non-anomeric C,
 3.56,,,araf,hemicellulose,non-anomeric C,
 3.32,,,methoxy,hemicellulose,non-anomeric C,
 3.63,,,Xmga,hemicellulose,non-anomeric C,
@@ -34,8 +34,8 @@
 3.56,,,Xylan,hemicellulose,non-anomeric C,
 3.37,,,Xylan,hemicellulose,non-anomeric C,
 3.97,,,Xylan,hemicellulose,non-anomeric C,
-4.58,,,,hemicellulose,non-anomeric C,
-,5.26,5.27,,hemicellulose,non-anomeric C,range
+4.58,,,Xylp,hemicellulose,non-anomeric C,
+,5.26,5.27,Manp,hemicellulose,non-anomeric C,range
 3.54,,,galp,hemicellulose,non-anomeric C,
 3.63,,,galp,hemicellulose,non-anomeric C,
 4.72,,,β-O-4',lignin,non-anomeric C,
@@ -51,18 +51,18 @@
 ,3.72,3.76,methoxy,cutin suberin,non-anomeric C,range
 4.28,,,Cα/Hα,amino acids,non-anomeric C,
 4.43,,,Cα/Hα,amino acids,non-anomeric C,
-,4.12,4.21,,amino acids,non-anomeric C,range
-4.90,,,galp,,anomeric C,
-,4.25,4.27,,,anomeric C,range
+,4.12,4.21,amino acids,amino acids,non-anomeric C,range
+4.9,,,Galp+Xylp,,anomeric C,
+,4.25,4.27,Galp+Xylp,,anomeric C,range
 4.78,,,Glcp,,anomeric C,
 4.88,,,Manp,,anomeric C,
 4.55,,,Manp,,anomeric C,
 4.67,,,mannans,,anomeric C,
 5.11,,,starch,,anomeric C,
 4.43,,,Galp,,anomeric C,
-5.10,,,fucop,,anomeric C,
-4.32,,,,cellulose,anomeric C,
-4.24,,,,cellulose,anomeric C,
+5.1,,,fucop,,anomeric C,
+4.32,,,cellulose,cellulose,anomeric C,
+4.24,,,cellulose,cellulose,anomeric C,
 4.29,,,Xylans,hemicellulose,anomeric C,
 5.08,,,MeGlcA,hemicellulose,anomeric C,
 4.77,,,Araf,hemicellulose,anomeric C,
