@@ -1,149 +1,100 @@
 library(readxl)
 library(readr)
 library(tidyverse)
-library(dplyr)
 library(ggplot2)
-
-# PART I. SETTING UP THE PARAMETERS ----
-## 1. set up bins ----
-
-## choose which set of BINS SET to use
-cat("ACTION: choose correct value of BINSET
-      a.> Clemente2012
-      b.> Lynch2019
-  type this into the code
-  e.g.: BINSET = [quot]Clemente2012[quot]")
-
-BINSET = "Clemente2012"
-
-bins = read_csv("nmr_bins.csv")
-bins2 = 
-  bins %>% 
-  # here we select only the BINSET we chose above
-  dplyr::select(group,startstop,BINSET) %>% 
-  na.omit %>% 
-  spread(startstop,BINSET)
+library(data.table)
+library(plyr)
+library(dplyr)
 
 
-#
-## 2. bins for water and DMSO solvent ----
-WATER_start = 3
-WATER_stop = 4
-
-DMSO_start = 2.25
-DMSO_stop = 2.75
-
-
-
-## 3. spectra plot parameters ----
-gg_nmr = 
-  ggplot()+
-  geom_rect(data=bins2, aes(xmin=start, xmax=stop, ymin=-Inf, ymax=+Inf, fill=group), color="grey70",alpha=0.1)+
-  scale_x_reverse(limits = c(10,0))+
-  xlab("shift, ppm")+
-  ylab("intensity")+
-  theme_bw() %+replace%
-  theme(legend.position = "right",
-        legend.key=element_blank(),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 12),
-        legend.key.size = unit(1.5, 'lines'),
-        panel.border = element_rect(color="black",size=1.5, fill = NA),
-        
-        plot.title = element_text(hjust = 0.05, size = 14),
-        axis.text = element_text(size = 14, color = "black"),
-        axis.title = element_text(size = 14, face = "bold", color = "black"),
-        
-        # formatting for facets
-        panel.background = element_blank(),
-        strip.background = element_rect(colour="white", fill="white"), #facet formatting
-        panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
-        panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
-        strip.text.x = element_text(size=12, face="bold"), #facet labels
-        strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
-  )
-
-#
 
 # PART II. NMR spectra ----
 
 # import all .csv files in the target folder 
+# since MestreNova splits the table into multiple columns, we do this 2 times and then combine
+# fml
+## 1. import and process NMR peak data ----
+filePaths <- list.files(path = "data/nmr_peaks/",pattern = "*.csv", full.names = TRUE)
 
-filePaths <- list.files(path = "data/peaks/",pattern = "*.csv", full.names = TRUE)
+# rbind.fill binds all rows and fills in missing columns
+spectra_temp1 <- do.call(rbind.fill, lapply(filePaths, function(path) {
+  # the files are tab-delimited, so read.csv will not work. import using read.table
+  # there is no header. so create new column names
+  # then add a new column `source` to denote the file name
+  df <- fread(path, header=TRUE)
+  df[["source"]] <- rep(path, nrow(df))
+  df}))
 
-spectra <- do.call(rbind, lapply(filePaths, function(path) {
-# the files are tab-delimited, so read.csv will not work. import using read.table
-# there is no header. so create new column names
-# then add a new column `source` to denote the file name
-    df <- read.csv(path, header=TRUE)
-    df[["source"]] <- rep(path, nrow(df))
-    df}))
-  
-# because the peaks are split into two columns, we need to combine them
-# first, create two temp files, one for each set
-# then, combine below
 
-spectra_temp1 = 
-  spectra %>% 
-  dplyr::select(source, ppm, Intensity, Area) 
-spectra_temp2 = 
-  spectra %>% 
-  dplyr::select(source, ppm.1, Intensity.1, Area.1) %>% 
-  rename(ppm = ppm.1,
-         Intensity = Intensity.1,
-         Area = Area.1)
+# this file has over 100 columns, because the peaks are split
+# collapse the columns by first selecting the different column types, and then melting
 
-## CLEANING
-spectra2 = 
-  spectra_temp1 %>% 
-  rbind(spectra_temp2)
-# retain only values 0-10ppm
-  filter(ppm>=0&ppm<=10) 
-# remove water and DMSO regions
-  filter(!(ppm>DMSO_start&ppm<WATER_stop)) %>%  
-  filter(!(ppm>DMSO_start&ppm<DMSO_stop))
-
-  
-## TRYING to collapse the columns 
 spectra_Area = 
-  spectra %>% 
+  spectra_temp1 %>% 
   dplyr::select(starts_with("Area")) %>% 
-  gather() %>% 
+  tidyr::gather() %>% 
   dplyr::select(value) %>% 
-  rename(Area=value)
+  dplyr::rename(Area=value)
 
 spectra_ppm = 
-  spectra %>% 
+  spectra_temp1 %>% 
   dplyr::select(starts_with("ppm")) %>% 
-  gather() %>% 
+  tidyr::gather() %>% 
   dplyr::select(value) %>% 
-  rename(ppm=value)
+  dplyr::rename(ppm=value)
 
 spectra_Intensity = 
-  spectra %>% 
+  spectra_temp1 %>% 
   dplyr::select(starts_with("Intensity")) %>% 
-  gather() %>% 
+  tidyr::gather() %>% 
   dplyr::select(value) %>% 
-  rename(Intensity=value)
+  dplyr::rename(Intensity=value)
 
 spectra_Width = 
-  spectra %>% 
+  spectra_temp1 %>% 
   dplyr::select(starts_with("Width")) %>% 
-  gather() %>% 
+  tidyr::gather() %>% 
   dplyr::select(value) %>% 
-  rename(Width=value)
+  dplyr::rename(Width=value)
 
 spectra_Source = 
-  spectra %>% 
+  spectra_temp1 %>% 
   dplyr::select(starts_with("Source")) %>% 
-  gather() %>% 
+  tidyr::gather() %>% 
   dplyr::select(value) %>% 
-  rename(Source=value)
+  dplyr::rename(Source=value)
+
+spectra_Flags = 
+  spectra_temp1 %>% 
+  dplyr::select(starts_with("Flags")) %>% 
+  tidyr::gather() %>% 
+  dplyr::select(value) %>% 
+  dplyr::rename(Flags=value)
 
 
 merged = 
-  cbind(spectra_Source, spectra_ppm, spectra_Intensity, spectra_Width,spectra_Area)
+  cbind(spectra_Source, spectra_ppm, spectra_Intensity, spectra_Width,spectra_Area, spectra_Flags)
 
-### OUTPUT
-write_csv(merged,"merged.csv")
-write_csv(spectra2,"processed_peaks.csv")
+# now, clean up
+peaks = 
+  merged %>% 
+  # keep only 0-10 ppm
+  filter(ppm>=0&ppm<=10) %>% 
+  # remove solvent regions
+  filter(!(ppm>DMSO_start & ppm<DMSO_stop)) %>% 
+  filter(!is.na(ppm)) %>% 
+  # remove peaks with 0 intensity, and peaks flagged as weak 
+  filter(Intensity > 0) %>% 
+  filter(!Flags=="Weak") %>% 
+  # the source column has the entire path, including directories
+  # delete the unnecessary strings
+  dplyr::mutate(Source = str_replace_all(Source,"data/nmr_peaks//",""),
+                Source = str_replace_all(Source,".csv","")) %>% 
+  dplyr::rename(Core = Source)
+
+#
+
+## OUTPUT ----
+write_csv(peaks, "processed/nmr_peaks.csv")
+
+
