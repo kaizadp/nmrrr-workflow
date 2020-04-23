@@ -1,15 +1,37 @@
 ---
-title: "NMR processing"
-author: "Kaizad Patel"
-date: 2020-01-31
 output: github_document
 ---
-Last updated: `r Sys.Date()`  
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo=FALSE,
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  fig.height = 1
+)
+```
 
 
-This script is to batch-analyze processed NMR spectra (phase corrected, baseline corrected, deconvoluted, peak picked).  
+<img align="right" heignt = "250" width = "250" src="images/nmr_hex.png">  
 
-Select the appropriate binning option and then plot and calculate relative abundances.  
+
+# nmrrr
+
+This script is designed for batch processing and analysis of **NMR r**esults in **R** (nmrrr).    
+
+Use this script for:  
+(a) plotting spectra  
+(b) calculating relative abundance of functional groups  
+(c) peak assignments  
+
+Before using this script, NMR spectra must  be processed in MestreNova (phase corrected, baseline corrected, deconvoluted, peak picked, normalized).  
+
+
+
+----
 
 
 ```{r setup, include=FALSE}
@@ -20,7 +42,7 @@ knitr::opts_chunk$set(echo=FALSE,message=FALSE,warning=FALSE,
 
 source("1-processing.R")
 ```
-----
+
 Example spectra:  
 spectra processed in MestreNova, with automated Global Spectral Deconvolution.   
 Water and solvent (DMSO) regions removed for graphing purposes. Still needs some cleaning. 
@@ -29,6 +51,7 @@ Water and solvent (DMSO) regions removed for graphing purposes. Still needs some
 spectra2 = 
   spectra2 %>% 
   filter(!(ppm>DMSO_start&ppm<WATER_stop))
+
 gg_nmr+
   geom_path(data=spectra2, aes(x = ppm, y = intensity, color = source))+
 # if you need to add labels:
@@ -65,3 +88,5 @@ gg_nmr+
   geom_vline(xintercept = DMSO_start, linetype="dashed")+
   geom_vline(xintercept = DMSO_stop, linetype="dashed")
 ```
+
+

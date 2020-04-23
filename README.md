@@ -1,15 +1,19 @@
-NMR processing
-================
-Kaizad Patel
-2020-01-31
 
-Last updated: 2020-02-01
+<img align="right" heignt = "250" width = "250" src="images/nmr_hex.png">
 
-This script is to batch-analyze processed NMR spectra (phase corrected,
-baseline corrected, deconvoluted, peak picked).
+# nmrrr
 
-Select the appropriate binning option and then plot and calculate
-relative abundances.
+This script is designed for batch processing and analysis of **NMR
+r**esults in **R** (nmrrr).
+
+Use this script for:  
+(a) plotting spectra  
+(b) calculating relative abundance of functional groups  
+(c) peak assignments
+
+Before using this script, NMR spectra must be processed in MestreNova
+(phase corrected, baseline corrected, deconvoluted, peak picked,
+normalized).
 
 -----
 
@@ -19,8 +23,8 @@ Deconvolution.
 Water and solvent (DMSO) regions removed for graphing purposes. Still
 needs some cleaning.
 
-![](readme_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+![](readme_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 Including solvents
 
-![](readme_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](readme_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
