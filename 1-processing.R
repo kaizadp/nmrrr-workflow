@@ -30,7 +30,7 @@ bins2 =
 WATER_start = 3
 WATER_stop = 4
 
-DMSO_start = 2.25
+DMSO_start = 2.20
 DMSO_stop = 2.75
 
 ## bins for relative abundance
@@ -87,7 +87,7 @@ gg_nmr =
 
 # import all .csv files in the target folder 
 
-filePaths <- list.files(path = "data/",pattern = "*.csv", full.names = TRUE)
+filePaths <- list.files(path = "data/spectra/",pattern = "*.csv", full.names = TRUE)
 
 spectra <- do.call(rbind, lapply(filePaths, function(path) {
 # the files are tab-delimited, so read.csv will not work. import using read.table
@@ -102,61 +102,61 @@ spectra <- do.call(rbind, lapply(filePaths, function(path) {
 spectra2 = 
   spectra %>% 
 # retain only values 0-10ppm
-  filter(ppm>=0&ppm<=10) 
+  filter(ppm>=0&ppm<=10) %>% 
 # remove water and DMSO regions
   filter(!(ppm>DMSO_start&ppm<WATER_stop)) %>%  
   filter(!(ppm>DMSO_start&ppm<DMSO_stop))
 
-temp = spectra2 %>% 
-  filter(source%in% c("data//29_2_TEST.csv",
-                      "data//29_3_TEST.csv",
-                      "data//29_amp.csv",
-                      "data//34_TEST3.csv",
-                      "data//34_amp.csv"))
-#
-# PART III: PLOTTING THE SPECTRA ----
-## since we created the base gg_nmr earlier, we only need to add a single layer for the geom_path spectra
-gg_nmr+
-  geom_path(data=temp, aes(x = ppm, y = intensity, color = source))+
-  ylim(-1000,25000)+
-  
-# if you need to add labels:
-  annotate("text", label = "aliphatic", x = 1.4, y = -700)+
-  annotate("text", label = "O-alkyl", x = 3.5, y = -700)+
-  annotate("text", label = "alpha-H", x = 4.45, y = -700)+
-  annotate("text", label = "aromatic", x = 7, y = -700)+
-  annotate("text", label = "amide", x = 8.1, y = -700)+
-  annotate("text", label = "\n\nWATER", x = 3.5, y = Inf)+
-  annotate("text", label = "\n\nDMSO", x = 2.48, y = Inf)+
-  geom_vline(xintercept = WATER_start, linetype="longdash")+
-  geom_vline(xintercept = WATER_stop, linetype="longdash")+
-  geom_vline(xintercept = DMSO_start, linetype="dashed")+
-  geom_vline(xintercept = DMSO_stop, linetype="dashed")+
-  
-  facet_wrap(~source, scales = "free_y")+theme(legend.position = "none")
-
-
-
-all = read.table("data/139_all.csv", col.names = c("ppm","all"))  %>% dplyr::mutate(ppm = round(ppm,3))
-solvent = read.table("data/139_solvent.csv", col.names = c("ppm","solvent"))%>% dplyr::mutate(ppm = round(ppm,3))
-
-solvent = 
-  solvent %>% 
-  left_join(all, by = "ppm") %>% 
-  ungroup %>% 
-  dplyr::mutate(a = all)
-
-
-solvent2 = as.data.frame(solvent)
-solvent2  = 
-  solvent2%>% 
-  dplyr::mutate(corrected=all-solvent) %>% 
-  filter(corrected>=0) %>% 
-  filter(ppm>=0 & ppm <=10)
-
-
-ggplot()+
-  geom_point(data = solvent2, aes(x = ppm, y = corrected), color = "red")+
-  geom_point(data = solvent2, aes(x = ppm, y = all), color = "blue")+
-  geom_point(data = solvent2, aes(x = ppm, y = solvent), color = "black", size=1, alpha=0.2)
-  
+    ##  # temp = spectra2 %>% 
+    ##  #   filter(source%in% c("data//29_2_TEST.csv",
+    ##  #                       "data//29_3_TEST.csv",
+    ##  #                       "data//29_amp.csv",
+    ##  #                       "data//34_TEST3.csv",
+    ##  #                       "data//34_amp.csv"))
+    ##  #
+    ##  # PART III: PLOTTING THE SPECTRA ----
+    ##  ## since we created the base gg_nmr earlier, we only need to add a single layer for the geom_path spectra
+    ##  gg_nmr+
+    ##    geom_path(data=spectra2, aes(x = ppm, y = intensity, color = source))+
+    ##    ylim(-1000,25000)+
+    ##    
+    ##  # if you need to add labels:
+    ##    annotate("text", label = "aliphatic", x = 1.4, y = -700)+
+    ##    annotate("text", label = "O-alkyl", x = 3.5, y = -700)+
+    ##    annotate("text", label = "alpha-H", x = 4.45, y = -700)+
+    ##    annotate("text", label = "aromatic", x = 7, y = -700)+
+    ##    annotate("text", label = "amide", x = 8.1, y = -700)+
+    ##    annotate("text", label = "\n\nWATER", x = 3.5, y = Inf)+
+    ##    annotate("text", label = "\n\nDMSO", x = 2.48, y = Inf)+
+    ##    geom_vline(xintercept = WATER_start, linetype="longdash")+
+    ##    geom_vline(xintercept = WATER_stop, linetype="longdash")+
+    ##    geom_vline(xintercept = DMSO_start, linetype="dashed")+
+    ##    geom_vline(xintercept = DMSO_stop, linetype="dashed")+
+    ##    
+    ##    facet_wrap(~source, scales = "free_y")+theme(legend.position = "none")
+    ##  
+    ##  
+    ##  
+    ##  all = read.table("data/139_all.csv", col.names = c("ppm","all"))  %>% dplyr::mutate(ppm = round(ppm,3))
+    ##  solvent = read.table("data/139_solvent.csv", col.names = c("ppm","solvent"))%>% dplyr::mutate(ppm = round(ppm,3))
+    ##  
+    ##  solvent = 
+    ##    solvent %>% 
+    ##    left_join(all, by = "ppm") %>% 
+    ##    ungroup %>% 
+    ##    dplyr::mutate(a = all)
+    ##  
+    ##  
+    ##  solvent2 = as.data.frame(solvent)
+    ##  solvent2  = 
+    ##    solvent2%>% 
+    ##    dplyr::mutate(corrected=all-solvent) %>% 
+    ##    filter(corrected>=0) %>% 
+    ##    filter(ppm>=0 & ppm <=10)
+    ##  
+    ##  
+    ##  ggplot()+
+    ##    geom_point(data = solvent2, aes(x = ppm, y = corrected), color = "red")+
+    ##    geom_point(data = solvent2, aes(x = ppm, y = all), color = "blue")+
+    ##    geom_point(data = solvent2, aes(x = ppm, y = solvent), color = "black", size=1, alpha=0.2)
+    ##    
