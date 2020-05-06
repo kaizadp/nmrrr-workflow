@@ -38,8 +38,9 @@ DMSO_start = 2.25
 DMSO_stop = 2.75
 
 
-## 3. spectra plot parameters ----
-gg_nmr = 
+# PART II. SETTING UP THE SPECTRA ----
+## 1. spectra with banded regions ----
+gg_nmr1 = 
   ggplot()+
   geom_rect(data=bins2, aes(xmin=start, xmax=stop, ymin=-Inf, ymax=+Inf, fill=group), color="grey70",alpha=0.1)+
   scale_x_reverse(limits = c(10,0))+
@@ -82,26 +83,23 @@ gg_nmr =
 
 #
 
+## 2. spectra without bands (use for manuscripts) ----
 gg_nmr2 =
   ggplot()+
-  geom_rect(data=bins2 %>% dplyr::filter(row_number() %% 2 == 0), aes(xmin=start, xmax=stop, ymin=100, ymax=100), color = "black")+
-  geom_rect(data=bins2 %>% dplyr::filter(row_number() %% 2 == 1), aes(xmin=start, xmax=stop, ymin=95, ymax=95), color = "black")+
-    
-  geom_text(data=bins2 %>% dplyr::filter(row_number() %% 2 == 0), aes(x = (start+stop)/2, y = 101, label = number))+
-  geom_text(data=bins2 %>% dplyr::filter(row_number() %% 2 == 1), aes(x = (start+stop)/2, y = 96, label = number))+
-    
+# stagger bracketing lines for odd vs. even rows  
+  geom_rect(data=bins2 %>% dplyr::filter(row_number() %% 2 == 0), 
+            aes(xmin=start, xmax=stop, ymin=100, ymax=100), color = "black")+
+  geom_rect(data=bins2 %>% dplyr::filter(row_number() %% 2 == 1), 
+            aes(xmin=start, xmax=stop, ymin=95, ymax=95), color = "black")+
+# stagger numbering like the lines
+  geom_text(data=bins2 %>% dplyr::filter(row_number() %% 2 == 0), 
+            aes(x = (start+stop)/2, y = 101, label = number))+
+  geom_text(data=bins2 %>% dplyr::filter(row_number() %% 2 == 1), 
+            aes(x = (start+stop)/2, y = 96, label = number))+
   scale_x_reverse(limits = c(10,0))+
   xlab("shift, ppm")+
   ylab("intensity")+
   
-  # labels:
-    ##  annotate("text", label = "aliphatic", x = 1.4, y = -0.1)+
-    ##  annotate("text", label = "O-alkyl", x = 3.5, y = -0.1)+
-    ##  annotate("text", label = "alpha-H", x = 4.45, y = -0.1)+
-    ##  annotate("text", label = "aromatic", x = 7, y = -0.1)+
-    ##  annotate("text", label = "amide", x = 8.1, y = -0.1)+
-    ##  annotate("text", label = "\n\nWATER", x = 3.5, y = Inf)+
-    ##  annotate("text", label = "\n\nDMSO", x = 2.48, y = Inf)+
   geom_vline(xintercept = WATER_start, linetype="longdash")+
   geom_vline(xintercept = WATER_stop, linetype="longdash")+
   geom_vline(xintercept = DMSO_start, linetype="dashed")+
