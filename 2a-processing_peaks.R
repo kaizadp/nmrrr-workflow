@@ -7,12 +7,20 @@ library(plyr)
 library(dplyr)
 
 
+# PART I. SET SOLVENT BINS ----
+WATER_start = 3
+WATER_stop = 4
 
-# PART II. NMR spectra ----
+DMSO_start = 2.25
+DMSO_stop = 2.75
+
+#
+# PART II. IMPORT NMR PEAKS FILES ----
 
 # import all .csv files in the target folder 
 # since MestreNova splits the table into multiple columns, we do this 2 times and then combine
 # fml
+
 ## 1. import and process NMR peak data ----
 filePaths <- list.files(path = "data/nmr_peaks/",pattern = "*.csv", full.names = TRUE)
 
