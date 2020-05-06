@@ -60,7 +60,7 @@ gg_nmr1 =
   geom_vline(xintercept = DMSO_start, linetype="dashed")+
   geom_vline(xintercept = DMSO_stop, linetype="dashed")+
   
-  theme_bw() %+replace%
+  theme_classic() %+replace%
   theme(legend.position = "right",
         legend.key=element_blank(),
         legend.title = element_blank(),
@@ -100,7 +100,7 @@ gg_nmr2 =
   xlab("shift, ppm")+
   ylab("intensity")+
   
-  theme_bw() %+replace%
+  theme_classic() %+replace%
   theme(legend.position = "right",
         legend.key=element_blank(),
         legend.title = element_blank(),
