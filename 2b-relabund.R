@@ -1,68 +1,71 @@
 
-
-spectra3 = 
-  subset(merge(spectra2, bins2), start <= ppm & ppm <= stop) %>% 
-  dplyr::select(source,ppm, Intensity, group) %>% 
-  filter(!(ppm>DMSO_start&ppm<DMSO_stop)) %>% 
-  group_by(source, group) %>% 
-  dplyr::summarize(intensity = sum(Intensity)) %>% 
-  group_by(source) %>% 
-  dplyr::mutate(total = sum(intensity),
-                relabund = round((intensity/total)*100,2))%>% 
-  mutate(pos = cumsum(relabund)- relabund/2)
-
-ggplot(data=spectra3, aes(x="", y=relabund, fill=group)) +
-  geom_bar(stat="identity", alpha=0.7) +
-  #geom_text(aes(x= "", y=pos, label = relabund), size=4) +  # note y = pos
-  facet_wrap(facets = .~source, labeller = label_value) +
-  coord_polar(theta = "y")+theme_bw()
+source("0-nmr_setup.R")
 
 
-### COMPARING RELABUND by peaks only vs. integration
+# I. LOAD FILES ----
+peaks = read.csv(PROCESSED_PEAKS, stringsAsFactors = F)
+corekey = read.csv(COREKEY)
 
-# 1. peaks only
 
-SPECTRA_134 = read.table("data/134_PEAKSPECTRUM.csv", col.names = c("ppm","intensity"))
-PEAKS_134 = read.csv("data/134_PEAKSONLY.csv")
+# II. CALCULATE RELATIVE ABUNUDANCE ----
+## calculate relative abundance of groups in each core
 
-spectra = 
-  subset(merge(SPECTRA_134, bins2), start <= ppm & ppm <= stop) %>% 
-  dplyr::select(ppm, intensity, group) %>% 
+rel_abund = 
+  subset(merge(peaks, bins2), start <= ppm & ppm <= stop) %>% 
+  #dplyr::select(source,ppm, Area, group) %>% 
   #filter(!(ppm>DMSO_start&ppm<DMSO_stop)) %>% 
-  group_by(group) %>% 
-  dplyr::summarize(intensity = sum(intensity)) %>% 
- # group_by(source) %>% 
-  dplyr::mutate(total = sum(intensity),
-                relabund = round((intensity/total)*100,2))%>% 
-  mutate(pos = cumsum(relabund)- relabund/2)
-
-peaks = 
-  subset(merge(PEAKS_134, bins2), start <= ppm & ppm <= stop) %>% 
-  dplyr::select(ppm, Area, group) %>% 
-  #filter(!(ppm>DMSO_start&ppm<DMSO_stop)) %>% 
-  group_by(group) %>% 
-  dplyr::summarize(intensity = sum(Area)) %>% 
-  # group_by(source) %>% 
-  dplyr::mutate(total = sum(intensity),
-                relabund = round((intensity/total)*100,2))%>% 
-  mutate(pos = cumsum(relabund)- relabund/2)
-
-
-gg_nmr+
-  geom_point(data=SPECTRA_134, aes(x = ppm, y = intensity))+
-  ylim(-1000,6000)+
+  group_by(Core, group) %>% 
+  dplyr::summarize(area = sum(Area)) %>% 
+  group_by(Core) %>% 
+  dplyr::mutate(total = sum(area),
+                relabund = round((area/total)*100,2)) %>% 
+  dplyr::select(Core, group, relabund) %>% 
+  spread(group, relabund) %>% 
+  melt(id="Core", variable.name = "group", value.name = "relabund") %>% 
+  replace(is.na(.), 0) %>% 
+  left_join(corekey, by = "Core") %>% 
+  ungroup()
   
-  # if you need to add labels:
-  annotate("text", label = "aliphatic", x = 1.4, y = -700)+
-  annotate("text", label = "O-alkyl", x = 3.5, y = -700)+
-  annotate("text", label = "alpha-H", x = 4.45, y = -700)+
-  annotate("text", label = "aromatic", x = 7, y = -700)+
-  annotate("text", label = "amide", x = 8.1, y = -700)+
-  annotate("text", label = "\n\nWATER", x = 3.5, y = Inf)+
-  annotate("text", label = "\n\nDMSO", x = 2.48, y = Inf)+
-  geom_vline(xintercept = WATER_start, linetype="longdash")+
-  geom_vline(xintercept = WATER_stop, linetype="longdash")+
-  geom_vline(xintercept = DMSO_start, linetype="dashed")+
-  geom_vline(xintercept = DMSO_stop, linetype="dashed")
-  
-  facet_wrap(~source, scales = "free_y")+theme(legend.position = "none")
+
+#
+
+
+## relative abundance by treatment
+rel_abund_trt = 
+  rel_abund %>% 
+  group_by(group, treatment) %>% 
+  dplyr::summarise(rel_abund = round(mean(relabund, na.rm=TRUE),2),
+                   se = round(sd(relabund)/sqrt(n()),2)) %>% 
+  dplyr::mutate(relative_abundance = paste(rel_abund,"\U00B1",se))
+
+
+# III. ANOVA FOR RELATIVE ABUNDANCE ----
+
+fit_aov_nmr <- function(dat) {
+  a <-aov(relabund ~ treatment, data = dat)
+  tibble(`p` = summary(a)[[1]][[1,"Pr(>F)"]])
+} 
+
+
+nmr_aov = 
+  rel_abund %>% 
+  group_by(group) %>% 
+  do(fit_aov_nmr(.)) %>% 
+  dplyr::mutate(p = round(p,4),
+                asterisk = if_else(p<0.05,"*",as.character(NA))) %>% 
+  dplyr::select(-p)
+
+rel_abund_summary = 
+  rel_abund_trt %>% 
+  dplyr::select(group, treatment, relative_abundance) %>% 
+  spread(treatment, relative_abundance) %>% 
+  left_join(nmr_aov, by = c("group")) %>% 
+  dplyr::mutate(
+    Wetting = paste(Wetting, asterisk))
+
+
+
+### OUTPUT ----
+write.csv(rel_abund_trt, RELABUND_TRT, row.names = FALSE)
+write.csv(rel_abund, RELABUND_CORES, row.names = FALSE)
+write.csv(rel_abund_summary, RELABUND_SUMMARY, row.names = FALSE)
