@@ -43,3 +43,16 @@ O-substituted aliphatic (1.3–2.9 ppm); (3) O-alkyl (2.9–4.1 ppm); (4)
 carbohydrates (4.8–5.2 ppm); (6) aromatic and phenolic (6.2–7.8 ppm);
 and (7) amide (7.8–8.4 ppm). The peak at 2.50 ppm arises from the
 solvent (DMSO-d6).
+
+-----
+
+## BINS USED
+
+These are the options available in the file
+`0-NMR_BINS.csv`
+
+| binset name  | state    | solvent | reference                                                                           |
+| ------------ | -------- | ------- | ----------------------------------------------------------------------------------- |
+| Clemente2012 | solution | DMSO-d6 | [Clemente et al. *Environmental Chemistry*](https://doi.org/10.1071/EN11096)        |
+| Mitchell2018 | solution | DMSO-d6 | [Mitchell et al. 2018, *Soil Systems*](https://doi.org/10.3390/soils2010008)        |
+| Lynch2019    | solution | D2O     | [Lynch et al. *Global Biogeochemical Cycles*](https://doi.org/10.1029/2018GB006030) |
