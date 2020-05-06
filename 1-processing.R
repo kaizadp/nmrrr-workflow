@@ -47,4 +47,4 @@ ggsave("images/spectra_1.png", width = 10, height = 4)
 gg_nmr2+
   geom_path(data = spectra2, aes(x = ppm, y = intensity, color = source))+
   ylim(0,3)
-ggsave("images/spectra_2.png", width = 12, height = 4)
+ggsave("images/spectra_2.png", width = 10, height = 4)
