@@ -12,7 +12,22 @@ library(ggplot2)
 
 #
 
-# PART II. SETTING UP THE PARAMETERS ----
+# PART II. SET FILE PATHS ----
+SPECTRA_FILES = "data/spectra/"
+PEAKS_FILES = "data/peaks/"
+BINS = "0-NMR_BINS.csv"
+
+COREKEY = "data/corekey.csv"
+
+
+PROCESSED_PEAKS = "processed/peaks.csv"
+
+RELABUND_CORES = "processed/relabund_cores.csv"
+RELABUND_TRT = "processed/relabund_trt.csv"
+RELABUND_SUMMARY = "processed/relabund_summary.csv"
+
+#
+# PART III. SETTING UP THE PARAMETERS ----
 ## 1. set up bins ----
 
 ## choose which set of BINS SET to use
@@ -25,7 +40,7 @@ cat("ACTION: choose correct value of BINSET
 
 BINSET = "Mitchell2018"
 
-bins = read_csv("nmr_bins.csv")
+bins = read_csv(BINS)
 bins2 = 
   bins %>% 
   # here we select only the BINSET we chose above
@@ -45,15 +60,3 @@ DMSO_start = 2.25
 DMSO_stop = 2.75
 
 #
-# PART III. SET FILE PATHS ----
-SPECTRA_FILES = "data/spectra/"
-PEAKS_FILES = "data/peaks/"
-
-COREKEY = "data/corekey.csv"
-
-
-PROCESSED_PEAKS = "processed/peaks.csv"
-
-RELABUND_CORES = "processed/relabund_cores.csv"
-RELABUND_TRT = "processed/relabund_trt.csv"
-RELABUND_SUMMARY = "processed/relabund_summary.csv"
