@@ -14,6 +14,7 @@ perform these steps before running the R scripts for further processing and anal
   - use GSD (global spectral deconvolution)
   - reference by solvent
 - remove water peak (optional)
+- save to new spectrum (peaks only) 
 - normalize to largest peak
 4. exporting
 - to plot spectra, save the FID file as .csv
