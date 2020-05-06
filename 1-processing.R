@@ -1,70 +1,16 @@
-library(readxl)
-library(readr)
-library(tidyverse)
-library(dplyr)
-library(ggplot2)
+###### NMRRR - NMR RESULTS WITH R
+###### KAIZAD F. PATEL, 2020
+###### SCRIPT 1: NMR PEAKS
 
-# PART I. SETTING UP THE PARAMETERS ----
-## 1. set up bins ----
+## USE THIS SCRIPT TO PROCESS PEAK FILES AND PLOT SPECTRA
 
-## choose which set of BINS SET to use
-cat("ACTION: choose correct value of BINSET
-      a.> Clemente2012
-      b.> Lynch2019
-  type this into the code
-  e.g.: BINSET = [quot]Clemente2012[quot]")
+# ----------------------------------------- - - -
 
-BINSET = "Clemente2012"
-
-bins = read_csv("nmr_bins.csv")
-bins2 = 
-  bins %>% 
-  # here we select only the BINSET we chose above
-  dplyr::select(group,startstop,BINSET) %>% 
-  na.omit %>% 
-  spread(startstop,BINSET)
-
+# PART I. LOAD THE PARAMETERS ----
+source("0-nmr_spectra_setup.R")
 
 #
-## 2. bins for water and DMSO solvent ----
-WATER_start = 3
-WATER_stop = 4
-
-DMSO_start = 2.20
-DMSO_stop = 2.75
-
-
-## 3. spectra plot parameters ----
-gg_nmr = 
-  ggplot()+
-  geom_rect(data=bins2, aes(xmin=start, xmax=stop, ymin=-Inf, ymax=+Inf, fill=group), color="grey70",alpha=0.1)+
-  scale_x_reverse(limits = c(10,0))+
-  xlab("shift, ppm")+
-  ylab("intensity")+
-  theme_bw() %+replace%
-  theme(legend.position = "right",
-        legend.key=element_blank(),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 12),
-        legend.key.size = unit(1.5, 'lines'),
-        panel.border = element_rect(color="black",size=1.5, fill = NA),
-        
-        plot.title = element_text(hjust = 0.05, size = 14),
-        axis.text = element_text(size = 14, color = "black"),
-        axis.title = element_text(size = 14, face = "bold", color = "black"),
-        
-        # formatting for facets
-        panel.background = element_blank(),
-        strip.background = element_rect(colour="white", fill="white"), #facet formatting
-        panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
-        panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
-        strip.text.x = element_text(size=12, face="bold"), #facet labels
-        strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
-  )
-
-#
-
-# PART II. NMR spectra ----
+# PART II. LOAD NMR SPECTRA FILES ----
 
 # import all .csv files in the target folder 
 
@@ -79,11 +25,26 @@ spectra <- do.call(rbind, lapply(filePaths, function(path) {
     df}))
   
 
-## CLEANING
+# CLEANING
 spectra2 = 
   spectra %>% 
 # retain only values 0-10ppm
-  filter(ppm>=0&ppm<=10) %>% 
+  filter(ppm>=0&ppm<=10)  
 # remove water and DMSO regions
-  filter(!(ppm>DMSO_start&ppm<WATER_stop)) %>%  
-  filter(!(ppm>DMSO_start&ppm<DMSO_stop))
+#  filter(!(ppm>DMSO_start&ppm<WATER_stop)) %>%  
+#  filter(!(ppm>DMSO_start&ppm<DMSO_stop))
+
+#
+
+# PART III. PLOT THE SPECTRA ----
+## using gg_nmr1
+gg_nmr1+
+  geom_path(data = spectra2, aes(x = ppm, y = intensity, color = source))+
+  ylim(0,3)
+ggsave("images/spectra_1.png", width = 10, height = 4)
+
+## using gg_nmr2
+gg_nmr2+
+  geom_path(data = spectra2, aes(x = ppm, y = intensity, color = source))+
+  ylim(0,3)
+ggsave("images/spectra_2.png", width = 12, height = 4)
