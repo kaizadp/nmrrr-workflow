@@ -1,10 +1,5 @@
-library(readxl)
-library(readr)
-library(tidyverse)
-library(ggplot2)
-library(data.table)
-library(plyr)
-library(dplyr)
+source("0-nmr_setup.R")
+
 
 
 # PART I. SET SOLVENT BINS ----
@@ -22,7 +17,7 @@ DMSO_stop = 2.75
 # fml
 
 ## 1. import and process NMR peak data ----
-filePaths <- list.files(path = "data/nmr_peaks/",pattern = "*.csv", full.names = TRUE)
+filePaths <- list.files(path = PEAKS_FILES,pattern = "*.csv", full.names = TRUE)
 
 # rbind.fill binds all rows and fills in missing columns
 spectra_temp1 <- do.call(rbind.fill, lapply(filePaths, function(path) {
@@ -96,13 +91,13 @@ peaks =
   filter(!Flags=="Weak") %>% 
   # the source column has the entire path, including directories
   # delete the unnecessary strings
-  dplyr::mutate(Source = str_replace_all(Source,"data/nmr_peaks//",""),
+  dplyr::mutate(Source = str_replace_all(Source,"data/peaks//",""),
                 Source = str_replace_all(Source,".csv","")) %>% 
   dplyr::rename(Core = Source)
 
 #
 
 ## OUTPUT ----
-write_csv(peaks, "processed/nmr_peaks.csv")
+write_csv(peaks, PROCESSED_PEAKS)
 
 
