@@ -2,6 +2,7 @@
 <img align="right" heignt = "250" width = "250" src="images/nmr_hex.png">
 
 # nmrrr
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3858839.svg)](https://doi.org/10.5281/zenodo.3858839)
 
 This script is designed for batch processing and analysis of **NMR
 r**esults in **R** (nmrrr).
