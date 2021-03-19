@@ -14,10 +14,7 @@ if(!all(diff(noname_cols) == 9)) {
 names(rawdat)[noname_cols] <- "Obs"  # give them a name
 
 # Extract each group in turn and store temporarily in a list
-nmr_list <- list()
-for(nnc in noname_cols) {
-  nmr_list[[nnc]] <- rawdat[nnc:(nnc + 8)]
-}
+nmr_list <- lapply(noname_cols, function(x) rawdat[x:(x + 8)])
 
 # Finally, bind everything into a single data frame
 # This uses dplyr but we could also use base R: do.call("rbind", nmr_list)
