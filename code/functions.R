@@ -15,7 +15,7 @@ names(rawdat)[noname_cols] <- "Obs"  # give them a name
 
 # Extract each group in turn and store temporarily in a list
 nmr_list <- list()
-for(nnc in seq_along(noname_cols)) {
+for(nnc in noname_cols) {
   nmr_list[[nnc]] <- rawdat[nnc:(nnc + 8)]
 }
 
