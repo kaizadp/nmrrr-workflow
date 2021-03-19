@@ -2,21 +2,20 @@
 # -------------------------------------------------------------------------
 # formatting the input files to make a long-form dataframe
 
-a = read.csv("data/peaks/27.csv")
+rawdat <- read.csv("data/peaks/27.csv", stringsAsFactors = FALSE, check.names = FALSE)
 
-col_names <- colnames(a)
-for(i in 1:9){
-  
-  a2 = a %>% dplyr::select(1:i) %>%  
-    # rename(col = 1) %>% 
-    mutate(group = 1) %>% 
-    as.list()
-  
-  a3 = a %>% dplyr::select(-(1:i)) %>%  dplyr::select(1:i) %>% 
-    # rename(col = 1) %>% 
-    mutate(group = 2) %>% 
-    as.list()
-  
-  combined = bind_rows(a2, a3)
+# The raw NMR data are in groups of nine columns, with the first column in the group
+# (the observation number) having no name. Start by finding these no-name columns and 
+# verifying they're exactly 9 positions part; otherwise we have a problem
+noname_cols <- which(names(rawdat) == "")
+if(!all(diff(noname_cols) == 9)) {
+  stop("Formatting problem: data don't appear to be in 9-column groups")
 }
+names(rawdat)[noname_cols] <- "Obs"  # give them a name
 
+# Extract each group in turn and store temporarily in a list
+nmr_list <- lapply(noname_cols, function(x) rawdat[x:(x + 8)])
+
+# Finally, bind everything into a single data frame
+# This uses dplyr but we could also use base R: do.call("rbind", nmr_list)
+nmr_dat <- dplyr::bind_rows(nmr_list)
