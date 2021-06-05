@@ -7,6 +7,7 @@ library(readxl)
 # STEP 1: source functions ------------------------------------------------
 source("code/functions_processing.R")
 source("code/functions_graphs.R")
+source("code/functions_relabund.R")
 
 
 # STEP 1b. set bins -------------------------------------------------------
@@ -29,7 +30,7 @@ PEAKS_FILES = "data/peaks/"
 spectra_processed = import_nmr_spectra_data(SPECTRA_FILES = "data/spectra/")
 peaks_processed = import_nmr_peaks(PEAKS_FILES = "data/peaks/")
 
-# STEP 4: graphs ----------------------------------------------------------
+# STEP 4: spectra graphs ----------------------------------------------------------
 gg_spectra(dat = spectra_processed, 
            LABEL_POSITION = 3, 
            aes(x = ppm, y = intensity, group = source, color = source),
@@ -38,4 +39,18 @@ gg_spectra(dat = spectra_processed,
   ylim(0, 3.5)
 
 
+# STEP 5: relative abundance ---------------------------
+
+## 5a. load corekey
+COREKEY = "data/corekey.csv"
+corekey = read.csv(COREKEY) %>% mutate(Core = as.character(Core))
+
+## 5b. set treatments
+TREATMENTS = quos(treatment)
+
+## 5c. compute and plot relabund
+relabund_cores = compute_relabund_cores(peaks_processed, bins_dat, corekey)
+relabund_summary = compute_relabund_summary(relabund_cores, TREATMENTS)
+relabund_summarytable = compute_relabund_summarytable(relabund_summary)
+relabund_bar = plot_relabund_bargraphs(relabund_summary, TREATMENTS)
 
