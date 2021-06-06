@@ -8,6 +8,7 @@ library(readxl)
 source("code/functions_processing.R")
 source("code/functions_graphs.R")
 source("code/functions_relabund.R")
+source("code/functions_stats.R")
 
 
 # STEP 1b. set bins -------------------------------------------------------
@@ -53,4 +54,11 @@ relabund_cores = compute_relabund_cores(peaks_processed, bins_dat, corekey)
 relabund_summary = compute_relabund_summary(relabund_cores, TREATMENTS)
 relabund_summarytable = compute_relabund_summarytable(relabund_summary)
 relabund_bar = plot_relabund_bargraphs(relabund_summary, TREATMENTS)
+
+
+# STEP 6: statistics ------------------------------------------------------
+# these functions are designed specifically for this test dataset, needs tweaking
+
+compute_nmr_permanova(relabund_cores)
+compute_fticr_pca(relabund_cores)
 
