@@ -17,6 +17,7 @@ compute_nmr_permanova = function(relabund_cores){
 
 #
 # IV. PCA functions -----------------------------------------------------------------
+# devtools::install_github("miraKlein/ggbiplot")
 library(ggbiplot)
 
 fit_pca_function = function(dat){
