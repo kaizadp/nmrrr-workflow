@@ -29,6 +29,9 @@ Use this script for:
 
 Before using this script, NMR spectra must  be processed in MestreNova (phase corrected, baseline corrected, deconvoluted, peak picked, normalized).  
 
+----
+
+2021-06-09 update: We are currently streamlining this workflow by converting the script into reproducible functions. They can be found in `code/nmrrr_workflow/`. -KFP
 
 
 ----
