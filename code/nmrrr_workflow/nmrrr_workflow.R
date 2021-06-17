@@ -48,6 +48,10 @@ COREKEY = "data/KFP_hysteresis/corekey.csv"
 corekey = read.csv(COREKEY) %>% mutate(Core = as.character(Core))
 
 ## 5b. set treatments
+## we are currently using the `treatment` column as a grouping variable for the relative abundance
+## replace this with the column names you want
+## you can use multiple column names, just separate them with a comma
+
 TREATMENTS = quos(treatment)
 
 ## 5c. compute and plot relabund
@@ -59,6 +63,7 @@ relabund_bar = plot_relabund_bargraphs(relabund_summary, TREATMENTS)
 
 # STEP 6: statistics ------------------------------------------------------
 # these functions are designed specifically for this test dataset, needs tweaking
+# may not work for other datasets without editing the main function.
 
 compute_nmr_permanova(relabund_cores)
 compute_fticr_pca(relabund_cores)
