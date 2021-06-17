@@ -25,12 +25,12 @@ BINSET = "Clemente2012"
 bins_dat = set_bins(BINSET)
 
 # STEP 2: set input directories -------------------------------------------
-SPECTRA_FILES = "data/spectra/"
-PEAKS_FILES = "data/peaks/"
+SPECTRA_FILES = "data/KFP_hysteresis/spectra/"
+PEAKS_FILES = "data/KFP_hysteresis/peaks/"
 
 # STEP 3: process spectra and peak data -----------------------------------
-spectra_processed = import_nmr_spectra_data(SPECTRA_FILES = "data/spectra/")
-peaks_processed = import_nmr_peaks(PEAKS_FILES = "data/peaks/")
+spectra_processed = import_nmr_spectra_data(SPECTRA_FILES)
+peaks_processed = import_nmr_peaks(PEAKS_FILES)
 
 # STEP 4: spectra graphs ----------------------------------------------------------
 gg_spectra(dat = spectra_processed, 
@@ -44,7 +44,7 @@ gg_spectra(dat = spectra_processed,
 # STEP 5: relative abundance ---------------------------
 
 ## 5a. load corekey
-COREKEY = "data/corekey.csv"
+COREKEY = "data/KFP_hysteresis/corekey.csv"
 corekey = read.csv(COREKEY) %>% mutate(Core = as.character(Core))
 
 ## 5b. set treatments
