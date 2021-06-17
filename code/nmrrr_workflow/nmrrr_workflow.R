@@ -5,10 +5,10 @@ library(tidyverse)
 library(readxl)
 
 # STEP 1: source functions ------------------------------------------------
-source("code/functions_processing.R")
-source("code/functions_graphs.R")
-source("code/functions_relabund.R")
-source("code/functions_stats.R")
+source("code/nmrrr_workflow/1-functions_processing.R")
+source("code/nmrrr_workflow/3-functions_graphs.R")
+source("code/nmrrr_workflow/2-functions_relabund.R")
+source("code/nmrrr_workflow/4-functions_stats.R")
 
 
 # STEP 1b. set bins -------------------------------------------------------
