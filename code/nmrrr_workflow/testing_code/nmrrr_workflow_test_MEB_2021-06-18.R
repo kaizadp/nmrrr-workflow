@@ -4,8 +4,8 @@ library(tidyverse)
 library(readxl)
 #should we add required packages here for the functions? Maybe even have function for installing too
 
-install.packages("devtools")
-devtools::install_github("miraKlein/ggbiplot")
+# install.packages("devtools")
+# devtools::install_github("miraKlein/ggbiplot")
 
 # STEP 1: source functions ------------------------------------------------
 source("code/nmrrr_workflow/1-functions_processing.R")
