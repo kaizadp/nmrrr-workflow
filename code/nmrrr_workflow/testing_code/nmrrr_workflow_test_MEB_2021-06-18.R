@@ -31,7 +31,9 @@ SPECTRA_FILES = "data/MEB_incubation/spectra/"
 PEAKS_FILES = "data/MEB_incubation/peaks/"
 
 # STEP 3: process spectra and peak data -----------------------------------
-spectra_processed = import_nmr_spectra_data(SPECTRA_FILES) #error: line 1 did not have 2 elements (getting this because the cut part of the spectra isn't saved)
+spectra_processed = import_nmr_spectra_data_forMEB(SPECTRA_FILES) 
+# KFP, 2021-06-23: using import_nmr_spectra_data_forMEB() for now, while we figure out the issue with file formats
+
 peaks_processed = import_nmr_peaks(PEAKS_FILES)
 
 # STEP 4: spectra graphs ----------------------------------------------------------

@@ -36,6 +36,37 @@ import_nmr_spectra_data = function(SPECTRA_FILES){
   process_spectra_data(spectra_dat)
 }
 
+import_nmr_spectra_data_forMEB = function(SPECTRA_FILES){
+  ## KFP, 2021-06-23: replacement function for MEB's spectra files
+  ## some problem with the tab-delimited CSV format (grr), so using this for now
+  ## needs fixing!!!
+  filePaths_spectra <- list.files(path = SPECTRA_FILES,pattern = "*.csv", full.names = TRUE)
+  spectra_dat <- do.call(rbind, lapply(filePaths_spectra, function(path) {
+    # the files are tab-delimited, so read.csv will not work. import using read.table
+    # there is no header. so create new column names
+    # then add a new column `source` to denote the file name
+    
+    ## using quote = "" for now
+    df <- read.table(path, header=FALSE, quote = "", col.names = c("ppm", "intensity", "drop"))
+    df[["source"]] <- rep(path, nrow(df))
+    df}))
+  
+  process_spectra_data = function(spectra_dat){
+    spectra_dat %>% 
+      dplyr::select(-drop) %>% 
+      mutate(ppm = str_remove_all(ppm, "\""),
+             ppm = as.numeric(ppm)) %>% 
+      # retain only values 0-10ppm
+      filter(ppm >= 0 & ppm <= 10) %>% 
+      mutate(source = str_remove(source, paste0(SPECTRA_FILES, "/"))) %>% 
+      mutate(source = str_remove(source, ".csv")) %>% 
+      # mutate(source = paste0("DOC-",source)) %>% 
+      # dplyr::rename(DOC_ID = source) %>% 
+      # left_join(doc_key, by = "DOC_ID") %>% 
+      force()
+  }
+  process_spectra_data(spectra_dat)
+}
 
 
 # II. NMR PEAKS -----------------------------------------------------------
