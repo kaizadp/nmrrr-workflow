@@ -1,0 +1,181 @@
+---
+title: "nmrrr - general workflow"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+This vignette represents the general workflow for processing NMR data using the *nmrrr* package. 
+
+This package works only on processed data (e.g., phase-corrected, baseline-corrected, peak-picked, etc.). 
+For tips on processing NMR data in MestreNova, check out the [repository wiki](https://github.com/kaizadp/nmrrr/wiki).
+
+---
+
+<details>
+  <summary>A note on the dataset - click to open</summary>
+  
+The data used in this example are a subset of the dataset generated for Patel et al. "Soil carbon dynamics during drying vs. rewetting: Importance of antecedent moisture conditions". [DOI: 10.1016/j.soilbio.2021.108165](https://doi.org/10.1016/j.soilbio.2021.108165). 
+
+Soils were subjected to two treatments:
+
+a. drought: soils were dried and then rewet to 50 % moisture (w/w)
+b. flood: soils were saturated and then dried to 50 % moisture (w/w)
+  
+</details>
+
+
+---
+
+Notes:
+
+- If you have individual files for your multi-sample batch, save all spectra files in one folder and peaks files in another folder
+- All input files must be in .csv format
+
+---
+
+## PART I: Setup (parameters)
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+### Step 1. `source` the functions 
+
+(*once we have the package, we won't have to `source`, just load the package - KP* ) 
+
+
+```{r}
+source("code/nmrrr_workflow/1-functions_processing.R")
+source("code/nmrrr_workflow/3-functions_graphs.R")
+```
+
+### Step 2. set the bins using BINSET = ...
+
+```{r}
+BINSET = "Clemente2012"
+bins_dat = set_bins(BINSET)
+```
+
+### Step 3. Set input directories
+
+```{r}
+SPECTRA_FILES = "data/KFP_hysteresis/spectra/"
+PEAKS_FILES = "data/KFP_hysteresis/peaks/"
+```
+
+---
+
+## PART II: Processing spectra files
+
+
+```{r}
+spectra_processed = import_nmr_spectra_data(SPECTRA_FILES)
+```
+
+This function will:
+
+- import all the files from the SPECTRA_FILES location, 
+- combine them into a single dataframe,
+- clean the dataframe,
+- and generate a dataframe with columns for ppm-shift, intensity, and sample-ID
+
+
+```{r}
+head(spectra_processed)
+```
+
+
+---
+
+## PART III: Plotting the spectra
+
+The `gg_spectra()` function will plot all the spectra present in the `spectra_processed` file.
+
+```{r}
+gg_spectra(dat = spectra_processed, 
+           LABEL_POSITION = 3, 
+           aes(x = ppm, y = intensity, group = source, color = source),
+           STAGGER = 0.5) + 
+  labs(subtitle = paste("binset:", BINSET))+
+  ylim(0, 3.5)
+```
+
+The compound classes (bins) are labelled in the graph. Adjust the position (y-axis) using `LABEL_POSITION = ...`.
+
+Overlaid spectra can be staggered along the y-axis using `STAGGER - ...`.
+
+This function makes use of `ggplot2` capabilities, and the plot can therefore be customized using `ggplot2` nomenclature.
+
+
+<details>
+  <summary>Additional examples using `gg_spectra()`  - *click to open*</summary>
+
+```{r}
+gg_spectra(dat = spectra_processed, 
+           LABEL_POSITION = 3, 
+           aes(x = ppm, y = intensity, group = source),
+           STAGGER = 0.5) + 
+  labs(subtitle = paste("binset:", BINSET))+
+  ylim(0, 3.5)
+```
+
+</details>
+
+
+---
+
+
+## PART IV: Processing peaks data
+
+When exporting peaks data from MestreNova, the data are generally split across multiple columns.
+
+The `import_nmr_peaks()` function will import the files in that format and then collapse all the columns for a single long-form dataframe.
+
+```{r}
+peaks_processed = import_nmr_peaks(PEAKS_FILES)
+```
+
+```{r}
+head(peaks_processed)
+```
+
+
+**Note: The user may want to assign additional filtering steps to filter certain flagged data points, e.g. impurities, weak peaks, etc. ** 
+
+For this current dataset, because of the strong influence of water peaks in the o-alkyl region, we exclude that region from our calculations.
+
+```{r}
+peaks_processed2 = 
+  peaks_processed %>% 
+  filter(group != "oalkyl")
+```
+
+
+---
+
+## PART V: Exporting the processed data
+
+The processed dataframes generated here can be exported using the usual R export functions, e.g. `write.csv()`, `write.table()`, etc.  
+
+
+---
+
+<details>
+  <summary>Session Info - click to open</summary>
+
+Date run: `r Sys.Date()`
+
+
+```{r, echo=FALSE}
+sessionInfo()
+```
+
+</details>
+
+---
