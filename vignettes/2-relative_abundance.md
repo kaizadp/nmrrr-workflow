@@ -18,7 +18,7 @@ each region.
 
 ------------------------------------------------------------------------
 
-## PART 1: Setup
+## PART I: Setup
 
 ``` r
 source("code/nmrrr_workflow/2-functions_relabund.R")
