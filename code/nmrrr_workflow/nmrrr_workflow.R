@@ -62,7 +62,7 @@ corekey = read.csv(COREKEY) %>% mutate(Core = as.character(Core))
 TREATMENTS = quos(treatment)
 
 ## 5c. compute and plot relabund
-relabund_cores = compute_relabund_cores(peaks_processed, bins_dat, corekey)
+relabund_cores = compute_relabund_cores(peaks_processed2, bins_dat, corekey)
 relabund_summary = compute_relabund_summary(relabund_cores, TREATMENTS)
 relabund_summarytable = compute_relabund_summarytable(relabund_summary)
 relabund_bar = plot_relabund_bargraphs(relabund_summary, TREATMENTS)
