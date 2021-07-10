@@ -115,7 +115,8 @@ import_nmr_peaks = function(PEAKS_FILES){
     # WATER_start = 3; WATER_stop = 4
     # DMSO_start = 2.25; DMSO_stop = 2.75
     
-    peaks_rawdat %>% 
+    processed = 
+      peaks_rawdat %>% 
       filter(ppm>=0&ppm<=10) %>% 
       filter(Intensity > 0) %>% 
       # remove solvent regions
@@ -130,6 +131,13 @@ import_nmr_peaks = function(PEAKS_FILES){
       #dplyr::select(-Obs, -source) %>% 
       dplyr::select(-Obs) %>% 
       force()
+    
+    bins_dat2 = 
+      bins_dat %>% 
+      dplyr::select(group, start, stop)
+    
+    subset(merge(processed, bins_dat2), start <= ppm & ppm <= stop) %>% 
+      dplyr::select(-start, -stop)
   }
   process_peaks_data(peaks_rawdat)
 }

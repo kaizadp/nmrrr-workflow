@@ -4,12 +4,13 @@
 
 compute_relabund_cores = function(peaks_processed, bins_dat, corekey){
   rel_abund_cores1 = 
-    subset(merge(peaks_processed, bins_dat), start <= ppm & ppm <= stop) %>% 
+    peaks_processed %>% 
+    #subset(merge(peaks_processed, bins_dat), start <= ppm & ppm <= stop) %>% 
     #dplyr::select(source,ppm, Area, group) %>% 
     #filter(!(ppm>DMSO_start&ppm<DMSO_stop)) %>% 
     rename(Core = source) %>% 
     group_by(Core, group) %>% 
-    filter(group != "oalkyl") %>% 
+    #filter(group != "oalkyl") %>% 
     dplyr::summarize(area = sum(Area)) %>% 
     group_by(Core) %>% 
     dplyr::mutate(total = sum(area),

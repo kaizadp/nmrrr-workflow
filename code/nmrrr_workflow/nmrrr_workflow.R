@@ -32,6 +32,13 @@ PEAKS_FILES = "data/KFP_hysteresis/peaks/"
 spectra_processed = import_nmr_spectra_data(SPECTRA_FILES)
 peaks_processed = import_nmr_peaks(PEAKS_FILES)
 
+## for this test dataset, we want to exclude o-alkyl group
+
+peaks_processed2 = 
+  peaks_processed %>% 
+  filter(group != "oalkyl")
+
+
 # STEP 4: spectra graphs ----------------------------------------------------------
 gg_spectra(dat = spectra_processed, 
            LABEL_POSITION = 3, 
