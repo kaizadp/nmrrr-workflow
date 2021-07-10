@@ -21,6 +21,10 @@ normalized).
 converting the script into reproducible functions. They can be found in
 `code/nmrrr_workflow/`. -KFP
 
+2021-07-10 update: The `vignettes` directory contains tutorials on how
+to use this package. The .md files are the rendered Markdown reports,
+and the .Rmd files are the source files for the reports. - KFP
+
 ------------------------------------------------------------------------
 
 Example spectra:  
