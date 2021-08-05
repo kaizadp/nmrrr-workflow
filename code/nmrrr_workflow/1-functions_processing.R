@@ -73,6 +73,9 @@ import_nmr_spectra_data_forMEB = function(SPECTRA_FILES){
 # this function will import NMR peaks data, align and combine, 
 # and then process and clean the dataset.
 import_nmr_peaks = function(PEAKS_FILES){
+  ## this function is to import files saved in split-column form
+  ## see data/KFP_hysteresis/peaks for an example
+  
   filePaths_peaks <- list.files(path = PEAKS_FILES,pattern = "*.csv", full.names = TRUE)
   peaks_rawdat <- do.call(bind_rows, lapply(filePaths_peaks, function(path) {
     # this function will import all the data files and combine for all samples
@@ -130,6 +133,52 @@ import_nmr_peaks = function(PEAKS_FILES){
       #mutate(DOC_ID = paste0("DOC-", DOC_ID)) %>% 
       #dplyr::select(-Obs, -source) %>% 
       dplyr::select(-Obs) %>% 
+      force()
+    
+    bins_dat2 = 
+      bins_dat %>% 
+      dplyr::select(group, start, stop)
+    
+    subset(merge(processed, bins_dat2), start <= ppm & ppm <= stop) %>% 
+      dplyr::select(-start, -stop)
+  }
+  process_peaks_data(peaks_rawdat)
+}
+
+import_nmr_peaks2 = function(PEAKS_FILES){
+  ## this function is to import files saved in single-column form (not split column), but without column names
+  ## see data/AMP_incubations/peaks for an example
+  
+  filePaths_peaks <- list.files(path = PEAKS_FILES,pattern = "*.csv", full.names = TRUE)
+  peaks_rawdat <- do.call(rbind, lapply(filePaths_peaks, function(path) {
+    # the files are tab-delimited, so read.csv will not work. import using read.table
+    # there is no header. so create new column names
+    # then add a new column `source` to denote the file name
+    df <- read.delim(path, 
+                     col.names = c("ppm", "Intensity", "Width", "Area", "Type", 
+                                   "Flags", "Impurity/Compound", "Annotation"))
+    df[["source"]] <- rep(path, nrow(df))
+    df}))
+  
+  # process the dataset
+  process_peaks_data = function(peaks_rawdat){
+    # WATER_start = 3; WATER_stop = 4
+    # DMSO_start = 2.25; DMSO_stop = 2.75
+    
+    processed = 
+      peaks_rawdat %>% 
+      filter(ppm>=0&ppm<=10) %>% 
+      filter(Intensity > 0) %>% 
+      # remove solvent regions
+      #filter(!(ppm>DMSO_start & ppm<DMSO_stop)) %>% 
+      #filter(!(ppm>WATER_start & ppm<WATER_stop)) %>% 
+      filter(!is.na(ppm)) %>% 
+      # remove peaks with 0 intensity, and peaks flagged as weak 
+      filter(!Flags=="Weak") %>% 
+      mutate(source = str_remove(source, paste0(PEAKS_FILES, "/"))) %>% 
+      mutate(source = str_remove(source, ".csv")) %>% 
+      #mutate(DOC_ID = paste0("DOC-", DOC_ID)) %>% 
+      #dplyr::select(-Obs, -source) %>% 
       force()
     
     bins_dat2 = 
