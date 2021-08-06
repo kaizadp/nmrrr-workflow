@@ -9,7 +9,6 @@ library(readxl)
 source("code/nmrrr_workflow/1-functions_processing.R")
 source("code/nmrrr_workflow/3-functions_graphs.R")
 source("code/nmrrr_workflow/2-functions_relabund.R")
-source("code/nmrrr_workflow/4-functions_stats.R")
 
 
 # STEP 1b. set bins -------------------------------------------------------
@@ -72,6 +71,7 @@ relabund_bar = plot_relabund_bargraphs(relabund_summary, TREATMENTS)
 # these functions are designed specifically for this test dataset, needs tweaking
 # may not work for other datasets without editing the main function.
 
-compute_nmr_permanova(relabund_cores)
-compute_fticr_pca(relabund_cores)
+# source("code/nmrrr_workflow/4-functions_stats.R")
+# compute_nmr_permanova(relabund_cores)
+# compute_fticr_pca(relabund_cores)
 
