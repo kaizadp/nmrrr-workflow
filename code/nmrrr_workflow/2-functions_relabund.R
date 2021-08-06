@@ -50,3 +50,24 @@ plot_relabund_bargraphs = function(relabund_summary, TRT){
   theme_classic()+
     NULL)
 }
+
+compute_relabund_cores_by_auc = function(bins_dat, spectra_processed){
+  ## computing relative abundance, type 2
+  ## using area under the curve from the spectra
+  
+  bins_dat2 = 
+    bins_dat %>% 
+    dplyr::select(group, start, stop)
+  
+  spectra_group = subset(merge(spectra_processed, bins_dat2), start <= ppm & ppm <= stop) %>% 
+    dplyr::select(-start, -stop)
+  
+  spectra_group %>% 
+    group_by(source, group) %>% 
+    dplyr::summarise(AUC = DescTools::AUC(x = ppm, y = intensity, 
+                               from = min(ppm), to = max(ppm)),
+                     method = "trapezoid") %>% 
+    mutate(total = sum(AUC),
+           relabund = (AUC/total)*100)
+  
+}
